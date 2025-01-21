@@ -1,5 +1,107 @@
 <template>
-    <h1 class="text-3xl font-bold text-green-500 underline">
-      User
-    </h1>
+  <div class="flex flex-row">
+
+
+    <div class="bg-white text-white p-4 flex-1 w-1/2 h-screen">
+      <h1 class="text-xl font-bold mb-4 text-center text-black">User List</h1>
+      <ul class="space-y-4">
+        <li v-for="user in users" :key="user.id" class="p-5 bg-sky-500 rounded-md flex justify-between items-center">
+          <span>
+           <p>ID: {{ user.id }}</p> <p>Name: {{ user.name }}</p> <p>Email: {{ user.email }}</p> <p>Role: {{ user.role }}</p>
+          </span>
+          <button @click="deleteUser(user.id)"
+            class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded-md flex items-center justify-center"
+            aria-label="Delete">
+            &times;
+          </button>
+        </li>
+      </ul>
+    </div>
+
+
+    <div class=" p-[70px] w-1/2 h-1/2 rounded ">
+      <div class="bg-sky-500 px-[100px] py-10 rounded">
+        <h2 class="text-xl font-bold text-white mb-4 text-center">Add New User</h2>
+        <form @submit.prevent="addUser" class="space-y-4 ">
+          <div>
+            <label class="block text-white mb-1" for="name">Name</label>
+            <input id="name" v-model="newUser.name" type="text" class="w-full p-2 rounded-md border border-gray-300"
+              placeholder="Enter name" />
+          </div>
+          <div>
+            <label class="block text-white mb-1" for="email">Email</label>
+            <input id="email" v-model="newUser.email" type="email" class="w-full p-2 rounded-md border border-gray-300"
+              placeholder="Enter email" />
+          </div>
+          <div>
+            <label class="block text-white mb-1" for="user-role">Role</label>
+            <select id="user-role" v-model="newUser.role"
+              class="w-full p-2 rounded-md border border-gray-300 bg-white mb-2">
+              <option value="" disabled>Select a role</option>
+              <option value="Admin">Admin</option>
+              <option value="User">User</option>
+            </select>
+          </div>
+          <div class="flex justify-center">
+            <button type="submit" class="px-4 py-2 bg-blue-800 text-white rounded-md hover:bg-slate-900">
+              Add User
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      users: [],
+      newUser: {
+        name: "",
+        email: "",
+        role: "",
+      },
+    };
+  },
+  mounted() {
+
+    const storedUsers = localStorage.getItem("users");
+    if (storedUsers) {
+      this.users = JSON.parse(storedUsers);
+    }
+  },
+  methods: {
+    addUser() {
+      if (this.newUser.name && this.newUser.email && this.newUser.role) {
+        const newUser = {
+          id: this.users.length + 1,
+          name: this.newUser.name,
+          email: this.newUser.email,
+          role: this.newUser.role,
+        };
+        this.users.push(newUser);
+
+
+        localStorage.setItem("users", JSON.stringify(this.users));
+
+
+        this.newUser.name = "";
+        this.newUser.email = "";
+        this.newUser.role = "";
+      }
+    },
+    deleteUser(userId) {
+
+      this.users = this.users.filter((user) => user.id !== userId);
+
+
+      localStorage.setItem("users", JSON.stringify(this.users));
+    },
+  },
+};
+</script>
+
+<style scoped></style>
