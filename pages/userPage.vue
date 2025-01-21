@@ -2,8 +2,8 @@
   <div class="flex flex-row">
 
 
-    <div class="bg-white text-white p-4 flex-1 w-1/2 h-screen">
-      <h1 class="text-xl font-bold mb-4 text-center text-black">User List</h1>
+    <div class="bg-white text-white p-4 flex-1 w-[55%] h-[600px] overflow-scroll">
+      <h1 class="text-xl font-bold mb-4 text-center text-[24px] text-black">User List</h1>
       <ul class="space-y-4">
         <li v-for="user in users" :key="user.id" class="p-5 bg-sky-500 rounded-md flex justify-between items-center">
           <span>
@@ -19,7 +19,7 @@
     </div>
 
 
-    <div class=" p-[70px] w-1/2 h-1/2 rounded ">
+    <div class="w-[45%] h-1/2 rounded-md pt-[7%] pl-[5%]">
       <div class="bg-sky-500 px-[100px] py-10 rounded">
         <h2 class="text-xl font-bold text-white mb-4 text-center">Add New User</h2>
         <form @submit.prevent="addUser" class="space-y-4 ">
@@ -93,6 +93,7 @@ export default {
         this.newUser.role = "";
       }
     },
+
     deleteUser(userId) {
 
       this.users = this.users.filter((user) => user.id !== userId);

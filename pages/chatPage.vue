@@ -3,9 +3,9 @@
         <input type="text" placeholder="Type message..." v-model="newMessage.message"
             class="h-[50px] w-[400px] px-[20px]" />
         <select v-model="newMessage.role" class="px-[20px]">
-            <option value="">Select a User</option>
-            <option>Admin</option>
-            <option>User</option>
+            <option value="" disabled>Select a User</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
         </select>
         <button @click="sendMessage"
             class="bg-sky-500 p-[0.5rem] px-[2rem] rounded-lg text-[20px] text-gray-100 font-semibold">
@@ -67,4 +67,3 @@ export default {
     },
 };
 </script>
-
