@@ -1,7 +1,7 @@
 <template>
     <div class="flex gap-6 justify-center sticky top-0">
         <input type="text" placeholder="type message..." class="h-[50px] w-[400px] px-[20px]">
-        <select class="px-[20px]">
+        <select class="px-[20px] border-sky-500 border-[2px] border-solid">
             <option>Select a User</option>
             <option>Admin</option>
             <option>User</option>
