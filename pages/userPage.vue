@@ -1,13 +1,11 @@
 <template>
   <div class="flex flex-row">
-
-
     <div class="bg-white text-white p-4 flex-1 w-[55%] h-[600px] overflow-scroll">
       <h1 class="text-xl font-bold mb-4 text-center text-[24px] text-black">User List</h1>
       <ul class="space-y-4">
         <li v-for="user in users" :key="user.id" class="p-5 bg-sky-500 rounded-md flex justify-between items-center">
           <span>
-           <p>ID: {{ user.id }}</p> <p>Name: {{ user.name }}</p> <p>Email: {{ user.email }}</p> <p>Role: {{ user.role }}</p>
+            <p>ID: {{ user.id }}</p> <p>Name: {{ user.name }}</p> <p>Email: {{ user.email }}</p> <p>Role: {{ user.role }}</p>
           </span>
           <button @click="deleteUser(user.id)"
             class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded-md flex items-center justify-center"
@@ -18,11 +16,10 @@
       </ul>
     </div>
 
-
     <div class="w-[45%] h-1/2 rounded-md pt-[7%] pl-[5%]">
       <div class="bg-sky-500 px-[100px] py-10 rounded">
         <h2 class="text-xl font-bold text-white mb-4 text-center">Add New User</h2>
-        <form @submit.prevent="addUser" class="space-y-4 ">
+        <form @submit.prevent="addUser" class="space-y-4">
           <div>
             <label class="block text-white mb-1" for="name">Name</label>
             <input id="name" v-model="newUser.name" type="text" class="w-full p-2 rounded-md border border-gray-300"
@@ -48,8 +45,8 @@
             </button>
           </div>
         </form>
+        <p v-if="toastMessage" class="mt-4 text-center text-red-500">{{ toastMessage }}</p>
       </div>
-
     </div>
   </div>
 </template>
@@ -64,10 +61,10 @@ export default {
         email: "",
         role: "",
       },
+      toastMessage: "", 
     };
   },
   mounted() {
-
     const storedUsers = localStorage.getItem("users");
     if (storedUsers) {
       this.users = JSON.parse(storedUsers);
@@ -75,30 +72,31 @@ export default {
   },
   methods: {
     addUser() {
+      if (this.newUser.role === "Admin" && this.users.some((user) => user.role === "Admin")) {
+        this.toastMessage = "An admin is already added. You cannot add another admin.";
+        setTimeout(() => {
+          this.toastMessage = ""; 
+        }, 3000);
+        return;
+      }
+
       if (this.newUser.name && this.newUser.email && this.newUser.role) {
         const newUser = {
-          id: this.users.length + 1,
+          id: Date.now(),
           name: this.newUser.name,
           email: this.newUser.email,
           role: this.newUser.role,
         };
         this.users.push(newUser);
-
-
         localStorage.setItem("users", JSON.stringify(this.users));
-
 
         this.newUser.name = "";
         this.newUser.email = "";
         this.newUser.role = "";
       }
     },
-
     deleteUser(userId) {
-
       this.users = this.users.filter((user) => user.id !== userId);
-
-
       localStorage.setItem("users", JSON.stringify(this.users));
     },
   },
