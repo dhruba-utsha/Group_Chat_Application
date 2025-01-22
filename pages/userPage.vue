@@ -7,7 +7,10 @@
       <ul class="space-y-4">
         <li v-for="user in users" :key="user.id" class="p-5 bg-sky-500 rounded-md flex justify-between items-center">
           <span>
-           <p>ID: {{ user.id }}</p> <p>Name: {{ user.name }}</p> <p>Email: {{ user.email }}</p> <p>Role: {{ user.role }}</p>
+            <p>ID: {{ user.id }}</p>
+            <p>Name: {{ user.name }}</p>
+            <p>Email: {{ user.email }}</p>
+            <p>Role: {{ user.role }}</p>
           </span>
           <button @click="deleteUser(user.id)"
             class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded-md flex items-center justify-center"
@@ -26,24 +29,25 @@
           <div>
             <label class="block text-white mb-1" for="name">Name</label>
             <input id="name" v-model="newUser.name" type="text" class="w-full p-2 rounded-md border border-gray-300"
-              placeholder="Enter name" />
+              placeholder="Enter name" required />
           </div>
           <div>
             <label class="block text-white mb-1" for="email">Email</label>
             <input id="email" v-model="newUser.email" type="email" class="w-full p-2 rounded-md border border-gray-300"
-              placeholder="Enter email" />
+              placeholder="Enter email" required />
           </div>
           <div>
             <label class="block text-white mb-1" for="user-role">Role</label>
             <select id="user-role" v-model="newUser.role"
-              class="w-full p-2 rounded-md border border-gray-300 bg-white mb-2">
+              class="w-full p-2 rounded-md border border-gray-300 bg-white mb-2" required>
               <option value="" disabled>Select a role</option>
               <option value="Admin">Admin</option>
               <option value="User">User</option>
             </select>
           </div>
           <div class="flex justify-center">
-            <button type="submit" class="px-4 py-2 bg-blue-800 text-white rounded-md hover:bg-slate-900">
+            <button @click="handleAlert" type="submit"
+              class="px-4 py-2 bg-blue-800 text-white rounded-md hover:bg-slate-900">
               Add User
             </button>
           </div>
@@ -55,6 +59,8 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
+
 export default {
   data() {
     return {
@@ -73,7 +79,18 @@ export default {
       this.users = JSON.parse(storedUsers);
     }
   },
+
+  // name: "AddUser",
   methods: {
+    handleAlert() {
+      if (this.newUser.name && this.newUser.email && this.newUser.role){
+        Swal.fire({
+          title: "User Successfully Added!",
+          icon: "success"
+        });
+      }
+    },
+
     addUser() {
       if (this.newUser.name && this.newUser.email && this.newUser.role) {
         const newUser = {
