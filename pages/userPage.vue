@@ -1,11 +1,10 @@
 <template>
   <div class="flex flex-row">
-    <div class="bg-white text-white p-4 flex-1 w-[55%] h-[600px] overflow-scroll">
+    <div class="bg-white text-white p-4 flex-1 w-[55%] h-[700px] overflow-scroll">
       <h1 class="text-xl font-bold mb-4 text-center text-[24px] text-black">User List</h1>
       <ul class="space-y-4">
         <li v-for="user in users" :key="user.id" class="p-5 bg-sky-500 rounded-md flex justify-between items-center">
           <span>
-            <p>ID: {{ user.id }}</p>
             <p>Name: {{ user.name }}</p>
             <p>Email: {{ user.email }}</p>
             <p>Role: {{ user.role }}</p>
@@ -39,7 +38,7 @@
               class="w-full p-2 rounded-md border border-gray-300 bg-white mb-2" required>
               <option value="" disabled>Select a role</option>
               <option value="Admin">Admin</option>
-              <option value="User">User</option>
+              <option value="Member">Member</option>
             </select>
           </div>
           <div class="flex justify-center">
@@ -49,7 +48,6 @@
             </button>
           </div>
         </form>
-        <p v-if="toastMessage" class="mt-4 text-center text-red-500">{{ toastMessage }}</p>
       </div>
     </div>
   </div>
@@ -77,23 +75,27 @@ export default {
     }
   },
 
-  // name: "AddUser",
   methods: {
     handleAlert() {
       if (this.newUser.name && this.newUser.email && this.newUser.role){
-        Swal.fire({
-          title: "User Successfully Added!",
-          icon: "success"
-        });
+        if (this.newUser.role === "Admin" && this.users.some((user) => user.role === "Admin")) {
+          Swal.fire({
+            title: "Admin Already Added!",
+            icon: "error"
+          });
+        }
+
+        else{
+          Swal.fire({
+            title: "User Successfully Added!",
+            icon: "success"
+          });
+        }
       }
     },
 
     addUser() {
       if (this.newUser.role === "Admin" && this.users.some((user) => user.role === "Admin")) {
-        this.toastMessage = "An admin is already added. You cannot add another admin.";
-        setTimeout(() => {
-          this.toastMessage = ""; 
-        }, 3000);
         return;
       }
 
