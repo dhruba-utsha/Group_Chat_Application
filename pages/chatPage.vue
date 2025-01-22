@@ -1,58 +1,71 @@
 <template>
-    <div class="flex gap-6 justify-center ">
-        <input type="text" placeholder="Type message..." v-model="newMessage.message"
-            class="h-[50px] w-[400px] px-[20px]" />
-        <select v-model="newMessage.role" class="px-[20px]">
-            <option value="" disabled>Select a User</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-        </select>
-        <button @click="sendMessage"
-            class="bg-sky-500 p-[0.5rem] px-[2rem] rounded-lg text-[20px] text-gray-100 font-semibold">
-            Send
-        </button>
-    </div>
+    <div class="flex flex-col h-[600px]">
 
-    <div  v-if="messages.length > 0 && messages[messages.length - 1].role === 'admin'">
-        <div class="text-white py-4 grid justify-end">
-            <ul class="space-y-4">
-                <li class="py-5 px-10 bg-sky-500 rounded-md">
-                    <span>
-                        <p>Message: {{ messages[messages.length - 1].message }}</p>
-                        <p>Role: {{ messages[messages.length - 1].role}}</p>
-                    </span>
-                </li>
-            </ul>
+        <div class="flex-1 overflow-y-scroll mb-5 border-[3px] border-sky-500 px-[10px]">
+            <div v-for="(message, index) in messages" :key="index">
+
+                <div v-if="message.role === 'member'" class="text-white my-4 flex justify-start">
+                    <div class="bg-gray-300 px-4 py-2 rounded-xl w-[40%]">
+                        <p class="font-bold text-[20px] py-3 text-sky-700">
+                            
+                            <span class="text-white bg-gray-400 p-3 rounded-[50%]">{{ getFirstLetter(getUserName(message.id)) }}</span>
+                            {{ getUserName(message.id) }} <span class="text-gray-600 pl-[18rem] text-[12px]">    {{ formatDate(message.date) }}</span>
+
+                        </p>
+                        <p class="text-[18px] text-black pl-12 pb-3">{{ message.message }}</p>
+                        
+                    </div>
+                </div>
+
+                <div v-else-if="message.role === 'admin'" class="text-white my-4 flex justify-end">
+                    <div class="bg-gray-300 px-4 py-2 rounded-xl w-[40%]">
+                        <p class="font-bold text-[20px] py-3 text-green-700">
+                            <span class="text-white bg-gray-400 p-3 rounded-[50%]">{{ getFirstLetter(getUserName(message.id)) }}</span>
+                            {{ getUserName(message.id) }} <span class="text-gray-600 pl-[18rem] text-[12px]">    {{ formatDate(message.date) }}</span>
+                        </p>
+                        <p class="text-[18px] text-black pl-12 pb-3">{{ message.message }}</p>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div @keydown.enter="sendMessage" class="flex gap-6 justify-center bg-sky-500 p-4 rounded-lg">
+            <input type="text" placeholder="Type message..." v-model="newMessage.message"
+                class="h-[50px] w-[400px] px-[20px] rounded-md border border-blue-800" />
+            <select v-model="newMessage.id" class="px-[20px] h-[50px] rounded-md border border-blue-800 bg-white">
+                <option value="" disabled>Select a Role</option>
+                <option v-for="user in users" :key="user.id" :value="user.id">
+                    {{ user.role }}: {{ user.name }}
+                </option>
+            </select>
+            <button @click="sendMessage"
+                class="bg-blue-800 p-[0.5rem] px-[2rem] rounded-lg text-[20px] text-gray-100 font-semibold hover:bg-blue-600">
+                Send
+            </button>
         </div>
     </div>
-
-    <div  v-if="messages.length > 0 && messages[messages.length - 1].role === 'user'">
-        <div class="text-white py-4 grid justify-start">
-            <ul class="space-y-4">
-                <li class="py-5 px-10 bg-sky-500 rounded-md">
-                    <span>
-                        <p>Message: {{ messages[messages.length - 1].message }}</p>
-                        <p>Role: {{ messages[messages.length - 1].role}}</p>
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </div>
-
 </template>
 
 <script>
 export default {
     data() {
         return {
+            users: [],
             messages: [],
             newMessage: {
                 message: "",
                 role: "",
+                id: "",
             },
         };
     },
     mounted() {
+        const storedUsers = localStorage.getItem("users");
+        if (storedUsers) {
+            this.users = JSON.parse(storedUsers);
+        }
 
         const storedMessages = localStorage.getItem("messages");
         if (storedMessages) {
@@ -61,29 +74,38 @@ export default {
     },
     methods: {
         sendMessage() {
-            if (this.newMessage.message && this.newMessage.role) {
+            if (this.newMessage.message && this.newMessage.id) {
+                const selectedUser = this.users.find((user) => user.id === this.newMessage.id);
+                if (!selectedUser) return;
+
                 const newMessage = {
                     message: this.newMessage.message,
-                    role: this.newMessage.role,
+                    role: selectedUser.role.toLowerCase(),
+                    id: this.newMessage.id,
+                    date: new Date().toISOString(), 
                 };
 
                 this.messages.push(newMessage);
-
-
                 localStorage.setItem("messages", JSON.stringify(this.messages));
 
-
                 this.newMessage.message = "";
-                this.newMessage.role = "";
+                this.newMessage.id = "";
             }
         },
+        getUserName(userId) {
+            const user = this.users.find((user) => user.id === userId);
+            return user ? user.name : "Unknown User";
+        },
+        getFirstLetter(userId) {
+            const user = this.users.find((user) => user.id === userId);
+            const twoletter= userId.slice(0,2);
 
-    },
-
-    recent(){
-        const last = messages[messages.length()-1]
-        return last
+            return twoletter.toUpperCase();
+        },
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString(); 
+        },
     },
 };
-
 </script>
