@@ -4,7 +4,7 @@
         <div class="flex-1 overflow-y-auto p-4">
             <div v-for="(message, index) in messages" :key="index">
                 
-                <div v-if="message.role === 'user'" class="text-white my-4 flex justify-start">
+                <div v-if="message.role === 'member'" class="text-white my-4 flex justify-start">
                     <div class="bg-sky-500 p-4 rounded-md max-w-md">
                         <p class="font-bold">
                             {{ getUserName(message.id) }}:
@@ -34,7 +34,7 @@
                 class="h-[50px] w-[400px] px-[20px] rounded-md border border-gray-300"
             />
             <select v-model="newMessage.id" class="px-[20px] h-[50px] rounded-md border border-gray-300 bg-white">
-                <option value="" disabled>Select a User</option>
+                <option value="" disabled>Select a Role</option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
                     {{ user.role }}: {{ user.name }}
                 </option>
