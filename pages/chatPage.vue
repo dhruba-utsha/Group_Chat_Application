@@ -1,39 +1,38 @@
 <template>
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-[600px]">
         
-        <div class="flex-1 overflow-y-auto p-4">
+        <div class="flex-1 overflow-y-scroll mb-5 border-[3px] border-sky-500 px-[10px]">
             <div v-for="(message, index) in messages" :key="index">
                 
                 <div v-if="message.role === 'member'" class="text-white my-4 flex justify-start">
-                    <div class="bg-sky-500 p-4 rounded-md max-w-md">
-                        <p class="font-bold">
-                            {{ getUserName(message.id) }}:
+                    <div class="bg-gray-300 px-4 py-2 rounded-xl w-[40%]">
+                        <p class="font-bold text-[20px] text-sky-700">
+                            {{ getUserName(message.id) }}
                         </p>
-                        <p>{{ message.message }}</p>
+                        <p class="text-[18px] text-black">{{ message.message }}</p>
                     </div>
                 </div>
-
                 
                 <div v-else-if="message.role === 'admin'" class="text-white my-4 flex justify-end">
-                    <div class="bg-green-500 p-4 rounded-md max-w-md">
-                        <p class="font-bold">
-                            {{ getUserName(message.id) }}:
+                    <div class="bg-gray-300 px-4 py-2 rounded-xl w-[40%]">
+                        <p class="font-bold text-[20px] text-green-700">
+                            {{ getUserName(message.id) }}
                         </p>
-                        <p>{{ message.message }}</p>
+                        <p class="text-[18px] text-black">{{ message.message }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
         
-        <div class="flex gap-6 justify-center sticky bottom-0 bg-gray-800 p-4">
+        <div class="flex gap-6 justify-center bg-sky-500 p-4 rounded-lg">
             <input
                 type="text"
                 placeholder="Type message..."
                 v-model="newMessage.message"
-                class="h-[50px] w-[400px] px-[20px] rounded-md border border-gray-300"
+                class="h-[50px] w-[400px] px-[20px] rounded-md border border-blue-800"
             />
-            <select v-model="newMessage.id" class="px-[20px] h-[50px] rounded-md border border-gray-300 bg-white">
+            <select v-model="newMessage.id" class="px-[20px] h-[50px] rounded-md border border-blue-800 bg-white">
                 <option value="" disabled>Select a Role</option>
                 <option v-for="user in users" :key="user.id" :value="user.id">
                     {{ user.role }}: {{ user.name }}
@@ -41,7 +40,7 @@
             </select>
             <button
                 @click="sendMessage"
-                class="bg-sky-500 p-[0.5rem] px-[2rem] rounded-lg text-[20px] text-gray-100 font-semibold hover:bg-sky-600"
+                class="bg-blue-800 p-[0.5rem] px-[2rem] rounded-lg text-[20px] text-gray-100 font-semibold hover:bg-blue-600"
             >
                 Send
             </button>

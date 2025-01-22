@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row">
-    <div class="bg-white text-white p-4 flex-1 w-[55%] h-[700px] overflow-scroll">
-      <h1 class="text-xl font-bold mb-4 text-center text-[24px] text-black">User List</h1>
+    <div class="bg-white text-white p-4 flex-1 w-[55%] h-[600px] overflow-scroll">
+      <h1 class="text-xl font-bold mb-4 text-center text-[28px] text-black">User List</h1>
       <ul class="space-y-4">
         <li v-for="user in users" :key="user.id" class="p-5 bg-sky-500 rounded-md flex justify-between items-center">
           <span>
