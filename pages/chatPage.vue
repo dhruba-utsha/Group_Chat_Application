@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col h-[600px]">
+    <div class="flex flex-col h-[700px]">
         
         <div ref="messagesContainer" class="flex-1 overflow-auto mb-5 border-[3px] border-sky-500 px-[10px]">
             <div v-for="(message, index) in messages" :key="index">
@@ -13,7 +13,8 @@
                             </p>
                             <p class="text-gray-600 text-[12px]">{{ formatDate(message.date) }}</p>
                         </div>
-                        <p class="text-[18px] text-black pl-12 pb-3">{{ message.message }}</p>
+                        <p v-if="message.message" class="text-[18px] text-black pl-12 pb-3">{{ message.message }}</p>
+                        <img v-if="message.image" :src="message.image" alt="User Uploaded Image" class="mx-auto py-3" />
                     </div>
                 </div>
                 
@@ -27,18 +28,20 @@
                             <p class="text-gray-600 pl-[10rem] text-[12px]">{{ formatDate(message.date) }}</p>
                         </div>
                         <p class="text-[18px] text-black pl-12 pb-3">{{ message.message }}</p>
+                        <img v-if="message.image" :src= "message.image" alt="User Uploaded Image" class="mx-auto py-3" />
                     </div>
                 </div>
             </div>
         </div>
         
         <div class="flex gap-6 justify-center bg-sky-500 p-4 rounded-lg">
+            <input type="text" placeholder="Enter Image link..." v-model="newMessage.image" class="h-[50px] w-[200px] px-[20px] rounded-md border border-blue-800">
             <input
                 @keydown.enter.prevent="sendMessage"
                 type="text"
                 placeholder="Type message..."
                 v-model="newMessage.message"
-                class="h-[50px] w-[400px] px-[20px] rounded-md border border-blue-800" required
+                class="h-[50px] w-[400px] px-[20px] rounded-md border border-blue-800"
             />
             <select @keydown.enter.prevent="sendMessage" v-model="newMessage.id" class="px-[20px] h-[50px] rounded-md border border-blue-800 bg-white" required>
                 <option value="" disabled>Select a Role</option>
@@ -65,6 +68,7 @@ const messages = ref([]);
 const newMessage = ref({
     message: "",
     id: "",
+    image: ""
 });
 
 const messagesContainer = ref(null);
@@ -85,12 +89,13 @@ onMounted(() => {
 
 
 const sendMessage = () => {
-    if (newMessage.value.message && newMessage.value.id) {
+    if (newMessage.value.message || newMessage.value.id || newMessage.value.image) {
         const selectedUser = users.value.find((user) => user.id === newMessage.value.id);
         if (!selectedUser) return;
 
         const newMsg = {
             message: newMessage.value.message,
+            image: newMessage.value.image,
             role: selectedUser.role.toLowerCase(),
             id: newMessage.value.id,
             date: new Date().toISOString(),
@@ -102,6 +107,7 @@ const sendMessage = () => {
 
         
         newMessage.value.message = "";
+        newMessage.value.image = "";
         newMessage.value.id = "";
 
         
@@ -110,7 +116,6 @@ const sendMessage = () => {
         });
     }
 };
-
 
 const getUserName = (userId) => {
     const user = users.value.find((user) => user.id === userId);

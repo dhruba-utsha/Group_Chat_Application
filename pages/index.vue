@@ -9,7 +9,7 @@
         </div>
 
         <div>
-            <img src="assets\images\group_image.jpg" alt="banner-image" width="[100%]">
+            <img src="\images\group_image.jpg" alt="banner-image" width="[100%]">
         </div>
     </div>
 </template>
