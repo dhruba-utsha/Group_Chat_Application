@@ -144,5 +144,3 @@ const deleteUser = (userId) => {
   });
 };
 </script>
-
-
