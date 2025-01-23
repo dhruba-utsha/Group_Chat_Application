@@ -1,14 +1,15 @@
 <template>
   <div class="flex flex-row">
-    <div class="bg-white text-white p-4 flex-1 w-[55%] h-[600px] overflow-y-scroll">
+   
+    <div class="bg-white text-white p-4 flex-1 w-[55%] h-[600px] overflow-scroll">
       <h1 class="font-bold mb-4 text-center text-[30px] text-black">User List</h1>
       <ul class="space-y-4">
         <li v-for="user in users" :key="user.id" class="p-5 bg-sky-500 rounded-md flex justify-between items-center">
-          <span>
+          <div>
             <p>Name: {{ user.name }}</p>
             <p>Email: {{ user.email }}</p>
             <p>Role: {{ user.role }}</p>
-          </span>
+          </div>
           <button @click="deleteUser(user.id)"
             class="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded-md flex items-center justify-center"
             aria-label="Delete">
@@ -18,6 +19,7 @@
       </ul>
     </div>
 
+    
     <div class="w-[45%] h-1/2 rounded-md pt-[7%] pl-[5%]">
       <div class="bg-sky-500 px-[100px] py-10 rounded">
         <h2 class="text-xl font-bold text-white mb-4 text-center">Add New User</h2>
@@ -53,73 +55,92 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, watch } from "vue";
 import Swal from "sweetalert2";
 
-export default {
-  data() {
-    return {
-      users: [],
-      newUser: {
-        name: "",
-        email: "",
-        role: "",
-      },
-      toastMessage: "", 
-    };
+
+const users = useState("users", () => {
+  const storedUsers = localStorage.getItem("users");
+  return storedUsers ? JSON.parse(storedUsers) : [];
+});
+
+
+const newUser = ref({
+  name: "",
+  email: "",
+  role: "",
+});
+
+
+watch(
+  users,
+  (newUsers) => {
+    localStorage.setItem("users", JSON.stringify(newUsers));
   },
-  mounted() {
-    const storedUsers = localStorage.getItem("users");
-    if (storedUsers) {
-      this.users = JSON.parse(storedUsers);
+  { deep: true }
+);
+
+
+const handleAlert = () => {
+  if (newUser.value.name && newUser.value.email && newUser.value.role) {
+    if (
+      newUser.value.role === "Admin" &&
+      users.value.some((user) => user.role === "Admin")
+    ) {
+      Swal.fire({
+        title: "Admin Already Added!",
+        icon: "error",
+      });
+    } else {
+      Swal.fire({
+        title: "User Successfully Added!",
+        icon: "success",
+      });
     }
-  },
+  }
+};
 
-  methods: {
-    handleAlert() {
-      if (this.newUser.name && this.newUser.email && this.newUser.role){
-        if (this.newUser.role === "Admin" && this.users.some((user) => user.role === "Admin")) {
-          Swal.fire({
-            title: "Admin Already Added!",
-            icon: "error"
-          });
-        }
 
-        else{
-          Swal.fire({
-            title: "User Successfully Added!",
-            icon: "success"
-          });
-        }
-      }
-    },
+const addUser = () => {
+  if (
+    newUser.value.role === "Admin" &&
+    users.value.some((user) => user.role === "Admin")
+  ) {
+    return;
+  }
 
-    addUser() {
-      if (this.newUser.role === "Admin" && this.users.some((user) => user.role === "Admin")) {
-        return;
-      }
+  if (newUser.value.name && newUser.value.email && newUser.value.role) {
+    const newUserData = {
+      id: Date.now(),
+      name: newUser.value.name,
+      email: newUser.value.email,
+      role: newUser.value.role,
+    };
 
-      if (this.newUser.name && this.newUser.email && this.newUser.role) {
-        const newUser = {
-          id: Date.now(),
-          name: this.newUser.name,
-          email: this.newUser.email,
-          role: this.newUser.role,
-        };
-        this.users.push(newUser);
-        localStorage.setItem("users", JSON.stringify(this.users));
+    users.value.push(newUserData);
 
-        this.newUser.name = "";
-        this.newUser.email = "";
-        this.newUser.role = "";
-      }
-    },
-    deleteUser(userId) {
-      this.users = this.users.filter((user) => user.id !== userId);
-      localStorage.setItem("users", JSON.stringify(this.users));
-    },
-  },
+    
+    newUser.value.name = "";
+    newUser.value.email = "";
+    newUser.value.role = "";
+
+    
+    Swal.fire({
+      title: "User Successfully Added!",
+      icon: "success",
+    });
+  }
+};
+
+
+const deleteUser = (userId) => {
+  users.value = users.value.filter((user) => user.id !== userId);
+
+  
+  Swal.fire({
+    title: "User Deleted!",
+    icon: "success",
+  });
 };
 </script>
-
-<style scoped></style>
